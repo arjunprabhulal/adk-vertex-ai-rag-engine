@@ -1,0 +1,310 @@
+manifest:
+  version: "0.1.3"
+  schema: https://a2as.org/cert/schema
+  subject:
+    name: arjunprabhulal/adk-vertex-ai-rag-engine
+    source: https://github.com/arjunprabhulal/adk-vertex-ai-rag-engine
+    branch: main
+    commit: "ef9d0344"
+    scope: [rag/agent.py, rag/config/__init__.py, rag/tools/__init__.py, rag/tools/corpus_tools.py, rag/tools/storage_tools.py]
+  issued:
+    by: A2AS.org
+    at: '2026-02-11T16:30:52Z'
+    url: https://a2as.org/certified/agents/arjunprabhulal/adk-vertex-ai-rag-engine
+  signatures:
+    digest: sha256:cMmCF3PU-2S5ynl03gBMZcMSsBIqAN1RfPdiYTljq8E
+    key: ed25519:iCguBhooGQTfJqHyHJkx8lTBW4c29EHJ6Ktf56vqAv8
+    sig: ed25519:Zcmpa0sPjudRrKJ5L3Yb5JJejzXtVx4O_dciL4rapfH-EQmpZqpSgLkkNOHCDkUkRIxm3TrPPXHyxHQ3rKCwCA
+
+agents:
+  agent:
+    type: instance
+    models: [gemini-2.0-flash-exp]
+    tools: [create_corpus_tool, update_corpus_tool, list_corpora_tool, get_corpus_tool, delete_corpus_tool, import_document_tool,
+      list_files_tool, get_file_tool, delete_file_tool, query_rag_corpus_tool, search_all_corpora_tool, create_bucket_tool,
+      list_buckets_tool, get_bucket_details_tool, upload_file_gcs_tool, list_blobs_tool, load_memory_tool]
+    params:
+      name: rag_corpus_manager
+      description: Agent for managing and searching Vertex AI RAG corpora and GCS buckets
+      instruction: [You are a helpful assistant that manages and searches RAG corpora in Vertex AI and Google Cloud Storage
+          buckets., Your primary goal is to understand the user's intent and select the most appropriate tool to help them
+          accomplish their tasks. Focus on what the user wants to do rather than specific tools., '- Use emojis to make responses
+          more friendly and readable:', '- ✅ for success', '- ❌ for errors', '- ℹ️ for info', '- 🗂️ for lists', '- 📄 for files
+          or corpora', '- 🔗 for GCS URIs (e.g., gs://bucket-name/file)', 'You can help users with these main types of tasks:',
+        '1. GCS OPERATIONS:', '- Upload files to GCS buckets (ask for bucket name and filename)', '- Create, list, and get
+          details of buckets', '- List files in buckets', '2. RAG CORPUS MANAGEMENT:', '- Create, update, list and delete
+          corpora', '- Import documents from GCS to a corpus (requires gcs_uri)', '- List, get details, and delete files within
+          a corpus', '3. CORPUS SEARCHING:', '- SEARCH ALL CORPORA: Use search_all_corpora(query_text="your question") to
+          search across ALL available corpora', '- SEARCH SPECIFIC CORPUS: Use query_rag_corpus(corpus_id="ID", query_text="your
+          question") for a specific corpus', '- When the user asks a question or for information, use the search_all_corpora
+          tool by default.', '- If the user specifies a corpus ID, use the query_rag_corpus tool for that corpus.', '- IMPORTANT
+          - CITATION FORMAT:', '- When presenting search results, ALWAYS include the citation information', '- Format each
+          result with its citation at the end: "[Source: Corpus Name (Corpus ID)]"', '- You can find citation information
+          in each result''s "citation" field', '- At the end of all results, include a Citations section with the citation_summary
+          information', 'Always confirm operations before executing them, especially for delete operations.', '- For any GCS
+          operation (upload, list, delete, etc.), always include the gs://<bucket-name>/<file> URI in your response to the
+          user. When creating, listing, or deleting items (buckets, files, corpora, etc.), display each as a bulleted list,
+          one per line, using the appropriate emoji (ℹ️ for buckets and info, 🗂️ for files, etc.). For example, when listing
+          GCS buckets:', '- 🗂️ gs://bucket-name/']
+      output_key: last_response
+
+models:
+  gemini-2.0-flash-exp:
+    type: literal
+    agents: [agent]
+
+tools:
+  create_bucket_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: storage_tools.create_bucket_tool
+  create_corpus_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.create_corpus_tool
+  delete_corpus_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.delete_corpus_tool
+  delete_file_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.delete_file_tool
+  get_bucket_details_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: storage_tools.get_bucket_details_tool
+  get_corpus_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.get_corpus_tool
+  get_file_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.get_file_tool
+  import_document_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.import_document_tool
+  list_blobs_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: storage_tools.list_blobs_tool
+  list_buckets_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: storage_tools.list_buckets_tool
+  list_corpora_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.list_corpora_tool
+  list_files_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.list_files_tool
+  load_memory_tool:
+    type: function
+    agents: [agent]
+  query_rag_corpus_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.query_rag_corpus_tool
+  search_all_corpora_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.search_all_corpora_tool
+  update_corpus_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: corpus_tools.update_corpus_tool
+  upload_file_gcs_tool:
+    type: function
+    agents: [agent]
+    params:
+      module: storage_tools.upload_file_gcs_tool
+
+imports:
+  agent: agent.agent
+  Agent: google.adk.agents.Agent
+  AGENT_MODEL: rag.config.AGENT_MODEL
+  AGENT_NAME: rag.config.AGENT_NAME
+  AGENT_OUTPUT_KEY: rag.config.AGENT_OUTPUT_KEY
+  Any: typing.Any
+  corpus_tools: rag.tools.corpus_tools
+  create_bucket_tool: storage_tools.create_bucket_tool
+  create_corpus_tool: corpus_tools.create_corpus_tool
+  delete_corpus_tool: corpus_tools.delete_corpus_tool
+  delete_file_tool: corpus_tools.delete_file_tool
+  Dict: typing.Dict
+  FunctionTool: google.adk.tools.FunctionTool
+  GCS_DEFAULT_CONTENT_TYPE: rag.config.GCS_DEFAULT_CONTENT_TYPE
+  GCS_DEFAULT_LOCATION: rag.config.GCS_DEFAULT_LOCATION
+  GCS_DEFAULT_STORAGE_CLASS: rag.config.GCS_DEFAULT_STORAGE_CLASS
+  GCS_LIST_BLOBS_MAX_RESULTS: rag.config.GCS_LIST_BLOBS_MAX_RESULTS
+  GCS_LIST_BUCKETS_MAX_RESULTS: rag.config.GCS_LIST_BUCKETS_MAX_RESULTS
+  get_bucket_details_tool: storage_tools.get_bucket_details_tool
+  get_corpus_tool: corpus_tools.get_corpus_tool
+  get_file_tool: corpus_tools.get_file_tool
+  GoogleAPIError: google.api_core.exceptions.GoogleAPIError
+  import_document_tool: corpus_tools.import_document_tool
+  list_blobs_tool: storage_tools.list_blobs_tool
+  list_buckets_tool: storage_tools.list_buckets_tool
+  list_corpora_tool: corpus_tools.list_corpora_tool
+  list_files_tool: corpus_tools.list_files_tool
+  load_memory_tool: google.adk.tools.load_memory_tool.load_memory_tool
+  LOCATION: rag.config.LOCATION
+  LOG_FORMAT: rag.config.LOG_FORMAT
+  LOG_LEVEL: rag.config.LOG_LEVEL
+  logging: logging
+  Optional: typing.Optional
+  os: os
+  PROJECT_ID: rag.config.PROJECT_ID
+  query_rag_corpus_tool: corpus_tools.query_rag_corpus_tool
+  rag: vertexai.preview.rag
+  RAG_DEFAULT_EMBEDDING_MODEL: rag.config.RAG_DEFAULT_EMBEDDING_MODEL
+  RAG_DEFAULT_PAGE_SIZE: rag.config.RAG_DEFAULT_PAGE_SIZE
+  RAG_DEFAULT_SEARCH_TOP_K: rag.config.RAG_DEFAULT_SEARCH_TOP_K
+  RAG_DEFAULT_TOP_K: rag.config.RAG_DEFAULT_TOP_K
+  RAG_DEFAULT_VECTOR_DISTANCE_THRESHOLD: rag.config.RAG_DEFAULT_VECTOR_DISTANCE_THRESHOLD
+  search_all_corpora_tool: corpus_tools.search_all_corpora_tool
+  storage: google.cloud.storage
+  storage_tools: rag.tools.storage_tools
+  ToolContext: google.adk.tools.ToolContext
+  update_corpus_tool: corpus_tools.update_corpus_tool
+  upload_file_gcs_tool: storage_tools.upload_file_gcs_tool
+  vertexai: vertexai
+
+functions:
+  create_gcs_bucket:
+    type: sync
+    module: rag.tools.storage_tools
+    args: [tool_context, bucket_name, storage_class, location]
+    params:
+      returns: Dict
+  create_rag_corpus:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [display_name, description, embedding_model]
+    params:
+      returns: Dict
+  delete_rag_corpus:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [corpus_id]
+    params:
+      returns: Dict
+  delete_rag_file:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [corpus_id, file_id]
+    params:
+      returns: Dict
+  get_bucket_details:
+    type: sync
+    module: rag.tools.storage_tools
+    args: [bucket_name]
+    params:
+      returns: Dict
+  get_rag_corpus:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [corpus_id]
+    params:
+      returns: Dict
+  get_rag_file:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [corpus_id, file_id]
+    params:
+      returns: Dict
+  import_document_to_corpus:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [corpus_id, gcs_uri]
+    params:
+      returns: Dict
+  list_blobs_in_bucket:
+    type: sync
+    module: rag.tools.storage_tools
+    args: [bucket_name, prefix, delimiter, max_results]
+    params:
+      returns: Dict
+  list_gcs_buckets:
+    type: sync
+    module: rag.tools.storage_tools
+    args: [prefix, max_results]
+    params:
+      returns: Dict
+  list_rag_corpora:
+    type: sync
+    module: rag.tools.corpus_tools
+    params:
+      returns: Dict
+  list_rag_files:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [corpus_id, page_size, page_token]
+    params:
+      returns: Dict
+  query_rag_corpus:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [corpus_id, query_text, top_k, vector_distance_threshold]
+    params:
+      returns: Dict
+  search_all_corpora:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [query_text, top_k_per_corpus, vector_distance_threshold]
+    params:
+      returns: Dict
+  update_rag_corpus:
+    type: sync
+    module: rag.tools.corpus_tools
+    args: [corpus_id, display_name, description]
+    params:
+      returns: Dict
+  upload_file_to_gcs:
+    type: sync
+    module: rag.tools.storage_tools
+    args: [tool_context, bucket_name, file_artifact_name, destination_blob_name, content_type]
+    params:
+      returns: Dict
+
+variables:
+  GOOGLE_CLOUD_LOCATION:
+    type: env
+    params:
+      caller: [os.environ.get]
+      path: [rag.config]
+  GOOGLE_CLOUD_PROJECT:
+    type: env
+    params:
+      caller: [os.environ.get]
+      path: [rag.config]
+
+networks:
+  storage.googleapis.com:
+    type: api
+    actions: [GET]
+    urls: ['/{...}']
+    protocols: [https]
+    ports: ["443"]
+    params:
+      pattern: https://storage.googleapis.com/{bucket_name}
+      caller: [create_gcs_bucket]
