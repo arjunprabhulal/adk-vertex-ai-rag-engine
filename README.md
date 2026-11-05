@@ -263,6 +263,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/)
 - [Vertex AI RAG Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview)
 - [Google Cloud Storage](https://cloud.google.com/storage)
+- [Building Agents with Google ADK 2.0](https://aiml.sh/courses/google-adk/): free hands-on course with runnable Python labs and tests (aiml.sh)
+- [Building Agentic RAG Applications](https://aiml.sh/courses/agentic-rag/): free course on retrieval agents, reranking and RAG evaluation (aiml.sh)
 
 ## Example Workflow
 
